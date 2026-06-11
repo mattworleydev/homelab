@@ -1,0 +1,22 @@
+services:
+  actualbudget:
+    image: actualbudget/actual-server:latest
+    container_name: actualbudget
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      - ./data:/data
+    environment:
+      - ACTUAL_DATA_DIR=/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.actualbudget.rule=Host(`budget.mattworley.dev`)"
+      - "traefik.http.routers.actualbudget.entrypoints=websecure"
+      - "traefik.http.routers.actualbudget.tls=true"
+      - "traefik.http.routers.actualbudget.tls.certresolver=cloudflare"
+      - "traefik.http.services.actualbudget.loadbalancer.server.port=5006"
+
+networks:
+  proxy:
+    external: true

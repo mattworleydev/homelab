@@ -1,0 +1,6 @@
+.env
+*.db
+*.sqlite
+acme.json
+logs/
+data/

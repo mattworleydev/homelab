@@ -1,0 +1,35 @@
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/services/
+
+- Home Lab:
+    - Traefik:
+        href: https://traefik.mattworley.dev
+        description: Reverse Proxy
+        icon: si-traefikproxy
+
+    - Portainer:
+        href: https://portainer.mattworley.dev
+        description: Docker Management
+        icon: si-portainer
+
+    - Homepage:
+        href: https://home.mattworley.dev
+        description: Dashboard
+        icon: si-homepage
+
+    - Uptime Kuma:
+        href: https://status.mattworley.dev
+        description: Monitoring
+        icon: si-uptimekuma
+
+- Services:
+    - Actual Budget:
+        href: https://budget.mattworley.dev
+        description: Finance Tracking
+        icon: si-actualbudget
+
+- Infrastructure:
+    - Proxmox:
+        href: https://192.168.1.10:8006
+        description: Virtualization Host
+        icon: si-proxmox

@@ -1,0 +1,16 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/settings/
+
+providers:
+  openweathermap: openweathermapapikey
+  weatherapi: weatherapiapikey
+
+title: Home
+theme: dark
+color: slate
+
+layout:
+  Home Lab:
+    style: row
+    columns: 3
