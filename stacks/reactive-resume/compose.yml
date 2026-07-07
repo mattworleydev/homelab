@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal
+
+  reactive-resume:
+    image: amruthpillai/reactive-resume:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.resume.rule=Host(`resume.mattworley.dev`)"
+      - "traefik.http.routers.resume.entrypoints=websecure"
+      - "traefik.http.routers.resume.tls=true"
+      - "traefik.http.routers.resume.tls.certresolver=cloudflare"
+      - "traefik.http.services.resume.loadbalancer.server.port=3000"
+    networks:
+      - proxy
+      - internal
+
+networks:
+  proxy:
+    external: true
+
+  internal:
+    driver: bridge
+
+volumes:
+  postgres_data:
