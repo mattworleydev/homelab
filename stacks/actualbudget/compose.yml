@@ -4,6 +4,10 @@ services:
     container_name: actualbudget
     restart: unless-stopped
 
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+
     networks:
       - proxy
 
