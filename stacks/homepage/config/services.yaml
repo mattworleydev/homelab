@@ -28,6 +28,11 @@
         description: Finance Tracking
         icon: si-actualbudget
 
+    - Reactive Resume:
+        href: https://resume.mattworley.dev
+        description: Resume Builder
+        icon: si-reactiveresume
+
 - Infrastructure:
     - Proxmox:
         href: https://192.168.1.10:8006
