@@ -28,6 +28,11 @@
         description: Finance Tracking
         icon: si-actualbudget
 
+    - Vaultwarden:
+        href: https://vault.mattworley.dev
+        description: Password Manager
+        icon: si-bitwarden
+
     - Reactive Resume:
         href: https://resume.mattworley.dev
         description: Resume Builder
