@@ -1,0 +1,71 @@
+services:
+  infisical:
+    image: infisical/infisical:latest
+    container_name: infisical
+    restart: unless-stopped
+
+    depends_on:
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+
+    networks:
+      - proxy
+      - infisical
+
+    environment:
+      - NODE_ENV=production
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - AUTH_SECRET=${AUTH_SECRET}
+
+      - DB_CONNECTION_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+
+      - REDIS_URL=redis://redis:6379
+
+      - SITE_URL=https://secrets.mattworley.dev
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.infisical.rule=Host(`secrets.mattworley.dev`)"
+      - "traefik.http.routers.infisical.entrypoints=websecure"
+      - "traefik.http.routers.infisical.tls=true"
+      - "traefik.http.services.infisical.loadbalancer.server.port=8080"
+
+  postgres:
+    image: postgres:16
+    container_name: infisical-postgres
+    restart: unless-stopped
+
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - infisical
+
+  redis:
+    image: redis:7-alpine
+    container_name: infisical-redis
+    restart: unless-stopped
+
+    volumes:
+      - redis_data:/data
+
+    networks:
+      - infisical
+
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  proxy:
+    external: true
+
+  infisical:
