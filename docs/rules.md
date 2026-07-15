@@ -6,7 +6,7 @@ The purpose of this repository is to maintain a reproducible, documented, and ve
 
 ## Repository Principles
 
-This repository followed Infrastructure-as-Code principles:
+This repository follows Infrastructure as Code (IaC) principles:
 
 - Infrastructure configuration should be stored as code
 - Changes should be tracked through Git history
@@ -43,7 +43,7 @@ The following should never be committed:
 
 - Secrets
 - Passwords
-- API Keys
+- API keys
 - Tokens
 - Private keys
 - Environment files containing credentials
@@ -82,7 +82,7 @@ Sensitive values should never be hardcoded into:
 
 When a service requires secrets:
 
-1. Store the secret in the approporiate secret management system
+1. Store the secret in the appropriate secret management system
 2. Reference the secret through environment variables or secure injection methods
 3. Verify that sensitive values are excluded from Git
 
@@ -110,7 +110,7 @@ Each service should have its own directory:
 stacks/<service>/
 ```
 
-Each stack shoudl contain:
+Each stack should contain:
 
 - `compose.yml`
 - Required non-sensitive configuration
@@ -122,12 +122,12 @@ Services should avoid unnecessary coupling with other stacks.
 
 Infrastructure changes should follow this process:
 
-1. Make changes within the repository
+1. Make changes in the repository
 2. Test changes locally
 3. Review changes with Git diff
 4. Commit changes with a descriptive message
 5. Push changes to GitHub
-6. Deploy update configuration
+6. Deploy the updated configuration
 
 Example:
 
@@ -144,7 +144,7 @@ Documentation should be updated when:
 - Adding new services
 - Changing architecture
 - Changing security practices
-- Chanign deployment processes
+- Changing deployment processes
 
 The goal is that another person can understand the environment without relying on undocumented knowledge.
 
@@ -154,6 +154,6 @@ Future improvements may include:
 
 - Automated GitOps deployments
 - Secret injection workflows
-- Configureation management
+- Configuration management
 - Automated backups
 - Disaster recovery testing
