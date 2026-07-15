@@ -64,7 +64,7 @@ homelab/
 
 Each stack contains:
 
-- Docker Compose definition
+- Docker Compose configuration
 - Service-specific configuration
 - Non-sensitive deployment files
 
@@ -111,7 +111,7 @@ Applications are exposed through Traefik rather than directly publishing individ
 Cloudflare provides:
 
 - Secure remote access through Cloudflare Tunnel
-- No direct inbound port forwarding
+- No direct inbound port forwarding required
 - External routing into the homelab environment
 
 ## Service Categories
@@ -237,7 +237,7 @@ Running Containers
 Example:
 
 ```bash
-cd stacks/<services>/
+cd stacks/<service>/
 docker compose up -d
 ```
 
