@@ -4,13 +4,13 @@ This repository defines my personal homelab infrastructure using Docker Compose 
 
 The goal of this project is to build a reproducible, documented, and maintainable environment while developing practical experience with:
 
-- Infrastucture as Code
+- Infrastructure as Code
 - GitOps workflows
 - Secret management
 - Containerization
 - Reverse proxying
 - Secure remote access
-- Monitoring and obervability
+- Monitoring and observability
 
 This repository serves as the source of truth for service definitions, configuration, and documentation.
 
@@ -80,7 +80,7 @@ Runtime data, databases, secrets, certificates, and generated files are intentio
 
 ## Infrastructure Principles
 
-This repository follows Insfrastrucutre-as-Code and GitOps principles:
+This repository follows Insfrastructure as Code (IaC) and GitOps principles:
 
 - Infrastructure configuration is stored in Git
 - Changes are tracked through commits
@@ -126,7 +126,7 @@ cd stacks/<service>/
 docker compose up -d
 ```
 
-After mking infrastructure changes:
+After making infrastructure changes:
 
 ```bash
 git add .
@@ -146,7 +146,7 @@ Maintain a simple, reproducible homelab environment where infrastructure changes
 
 Long-term goals include:
 
-- explanding GitOps automation
+- expanding GitOps automation
 - improving configuration management
 - automating deployments
 - improving monitoring and observability
