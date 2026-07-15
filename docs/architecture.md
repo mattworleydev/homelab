@@ -1,69 +1,253 @@
 # Homelab Architecture
 
 ## Overview
-This homelab runs on a single Debian VM with Docker Compose.
+This homelab is built around a virtualization-first architecture.
 
-All service definitions are managed through this repository and deployed from:
+The current environment consists of:
+
+- Proxmox for virtualization
+- Debian VM for Docker workloads
+- Docker Compose for service deployment
+- GitHub repository for infrastructure configuration
+
+The Docker environment is managed from:
 
 ```text
-/home/matt/homelab/stacks
+/home/matt/homelab
 ```
 
-## Core Services
+This repository contains service definitions, configuration files, and documentation required to recreate the application layer of the homelab.
 
-### Networking and Access
+## Infrastructure Layout
 
-- Traefik - Reverse proxy and TLS termination
-- Cloudflared - Secure tunnel ingress through Cloudflare
+Current architecture:
 
-### Management
+```text
+Physical Hardware
+        |
+        v
+     Proxmox
+        |
+        v
+ Debian Docker VM
+        |
+        v
+ Docker Compose Stacks
+        |
+        v
+ Application Containers
+```
 
-- Homepage - Homelab dashboard
-- Portainer - Container management
-- Uptime Kuma - Service monitoring
+## Docker Stack Organization
 
-### Applications
+Each service is deployed as an independent Docker Compose stack.
 
-- Actual Budget - Personal finance management
-- Reactive Resume - Resume management
-
-## Repository Layout
+Repository structure:
 
 ```text
 homelab/
 ├── docs/
+│   ├── architecture.md
+│   └── rules.md
 ├── scripts/
 └── stacks/
-├── actualbudget/
-├── cloudflared/
-├── homepage/
-├── portainer/
-├── reactive-resume/
-├── traefik/
-└── uptime-kuma/
+    ├── actualbudget/
+    ├── cloudflared/
+    ├── homepage/
+    ├── infisical/
+    ├── portainer/
+    ├── reactive-resume/
+    ├── traefik/
+    ├── uptime-kuma/
+    └── vaultwarden/
 ```
 
-Each stack contains its Docker Compose definition and required configuration.
+Each stack contains:
+
+- Docker Compose definition
+- Service-specific configuration
+- Non-sensitive deployment files
+
+Persistent application data is stored separately from the repository.
+
+## Network Architecture
+
+External access is provided through Cloudflare Tunnel.
+
+Current traffic flow:
+
+```text
+Internet
+    |
+    v
+Cloudflare
+    |
+    v
+Cloudflare Tunnel
+    |
+    v
+Traefik Reverse Proxy
+    |
+    v
+Docker Services
+```
+
+## Reverse Proxy
+
+### Traefik
+
+Traefik is responsible for:
+
+- Reverse proxying services
+- TLS termination
+- Routing requests to Docker services
+
+Applications are exposed through Traefik rather than directly publishing individual services externally.
+
+## Secure Remote Access
+
+### Cloudflared
+
+Cloudflare provides:
+
+- Secure remote access through Cloudflare Tunnel
+- No direct inbound port forwarding
+- External routing into the homelab environment
+
+## Service Categories
+
+### Infrastructure Services
+
+#### Traefik
+
+Role:
+
+- Reverse proxy
+- TLS management
+- Service routing
+
+#### Cloudflared
+
+Role:
+
+- Secure tunnel ingress
+
+### Management Services
+
+#### Homepage
+
+Role:
+
+- Centralized dashboard
+- Service navigation
+- Homelab overview
+
+#### Portainer
+
+Role:
+
+- Docker management interface
+
+#### Uptime Kuma
+
+Role:
+
+- Service availability monitoring
+
+### Security Services
+
+#### Infisical
+
+Role:
+
+- Application and infrastructure secret management
+
+Infisical is intended to store sensitive configuration values that should not exist in Git.
+
+#### Vaultwarden
+
+Role:
+
+- Human credential management
+
+Vaultwarden stores personal passwords and credentials.
+
+Infisical and Vaultwarden serve different purposes:
+
+| Service | Purpose |
+| --- | --- |
+| Infisical | Application secrets and infrastructure credentials |
+| Vaultwarden | Human-managed passwords |
+
+### Application Services
+
+#### Actual Budget
+
+Role:
+
+- Personal finance management
+
+#### Reactive Resume
+
+Role:
+
+- Resume management
 
 ## Data Management
 
-Persistent application data is stored outside of Git.
+Application runtime data is intentionally separated from source control.
+
+Excluded from Git:
+
+- Databases
+- Uploaded files
+- Application state
+- Secrets
+- Certificates
+- Logs
+- Generated files
 
 Examples:
 
-- databases
-- application state
-- uploaded files
-- generated certificates
-- secrets
+```text
+/data/
+*.sqlite
+*.db
+.env
+acme.json
+*.pem
+```
 
-These are backed up separately from the repository.
+Persistent data is backed up separately from the Git repository.
 
-## Deployment Model
+## Deployment Workflow
 
-The repository follows a GitOps-style approach:
+Current deployment process:
 
-- Git is the source of truth
-- Infrastructure changes are committed and versioned
-- Deployments are performed from repository definitions
-- Services can be recreated consistently on new infrastructure
+```text
+GitHub Repository
+        |
+        v
+Manual Docker Compose Deployment
+        |
+        v
+Running Containers
+```
+
+Example:
+
+```bash
+cd stacks/<services>/
+docker compose up -d
+```
+
+## Future Improvements
+
+Planned improvements:
+
+- Automated GitOps deployment workflow
+- Secret injection from Infisical
+- Configuration management using tools such as Ansible
+- Improved monitoring and observability
+- Automated backup validation
+- Disaster recovery procedures
