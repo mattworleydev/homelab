@@ -33,6 +33,11 @@
         description: Password Manager
         icon: si-bitwarden
 
+    - Infisical:
+        href: https://secrets.mattworley.dev
+        description: Secrets Manager
+        icon: si-infinityfree
+
     - Reactive Resume:
         href: https://resume.mattworley.dev
         description: Resume Builder
