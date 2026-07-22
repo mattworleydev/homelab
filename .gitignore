@@ -5,3 +5,5 @@
 acme.json
 logs/
 **/data/
+*.backup*
+*.backup*
