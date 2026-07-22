@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${REACTIVE_RESUME_DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -19,8 +19,10 @@ services:
   reactive-resume:
     image: amruthpillai/reactive-resume:latest
     restart: unless-stopped
-    env_file:
-      - .env
+    environment:
+      - APP_URL=${REACTIVE_RESUME_APP_URL}
+      - DATABASE_URL=${REACTIVE_RESUME_DATABASE_URL}
+      - AUTH_SECRET=${REACTIVE_RESUME_AUTH_SECRET}
     volumes:
       - ./data:/app/data
     depends_on:
