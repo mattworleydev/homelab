@@ -1,9 +1,23 @@
+# Environment files
 .env
 *.env
+
+# Databases
 *.db
 *.sqlite
+
+# Backups
+*.backup*
+
+# ACME certificates
 acme.json
+
+# Logs
 logs/
+
+# Runtime application data
 **/data/
-*.backup*
-*.backup*
+stacks/adguard-home/work/
+
+# Secrets / generated configs
+stacks/adguard-home/conf/AdGuardHome.yaml

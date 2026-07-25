@@ -1,0 +1,29 @@
+services:
+  adguard-home:
+    image: adguard/adguardhome:latest
+    container_name: adguard-home
+    restart: unless-stopped
+
+    networks:
+      - proxy
+
+    volumes:
+      - ./conf:/opt/adguardhome/conf # app configuration
+      - ./work:/opt/adguardhome/work # app working directory
+
+    ports:
+      # DNS
+      - 53:53/tcp # plain dns over tcp
+      - 53:53/udp # plain dns over udp
+      
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.adguard.rule=Host(`dns.mattworley.dev`)"
+      - "traefik.http.routers.adguard.entrypoints=websecure"
+      - "traefik.http.routers.adguard.tls=true"
+      - "traefik.http.routers.adguard.tls.certresolver=cloudflare"
+      - "traefik.http.services.adguard.loadbalancer.server.port=3000"
+    
+networks:
+  proxy:
+    external: true
