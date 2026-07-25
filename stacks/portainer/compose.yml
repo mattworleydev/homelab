@@ -16,6 +16,7 @@ services:
       - "traefik.http.routers.portainer.rule=Host(`portainer.mattworley.dev`)"
       - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.routers.portainer.tls=true"
+      - "traefik.http.routers.portainer.tls.certresolver=cloudflare"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
 
 volumes:
