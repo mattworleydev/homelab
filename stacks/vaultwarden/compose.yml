@@ -8,7 +8,7 @@ services:
       - proxy
 
     volumes:
-      - ./data:/data
+      - vaultwarden_data:/data
 
     environment:
       - SIGNUPS_ALLOWED=false
@@ -20,6 +20,9 @@ services:
       - "traefik.http.routers.vaultwarden.tls=true"
       - "traefik.http.routers.vaultwarden.tls.certresolver=cloudflare"
       - "traefik.http.services.vaultwarden.loadbalancer.server.port=80"
+
+volumes:
+  vaultwarden_data:
 
 networks:
   proxy:
