@@ -8,8 +8,8 @@ services:
       - proxy
 
     volumes:
-      - ./conf:/opt/adguardhome/conf # app configuration
-      - ./work:/opt/adguardhome/work # app working directory
+      - adguard_conf:/opt/adguardhome/conf # app configuration
+      - adguard_work:/opt/adguardhome/work # app working directory
 
     ports:
       # DNS
@@ -27,3 +27,12 @@ services:
 networks:
   proxy:
     external: true
+
+volumes:
+  adguard_conf:
+    external: true
+    name: adguard_conf
+
+  adguard_work:
+    external: true
+    name: adguard_work
