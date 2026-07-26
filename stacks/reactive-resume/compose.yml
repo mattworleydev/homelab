@@ -1,33 +1,43 @@
 services:
   postgres:
     image: postgres:16
+    container_name: reactive-resume-db
     restart: unless-stopped
+
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${REACTIVE_RESUME_DB_PASSWORD}
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 10s
       timeout: 5s
       retries: 10
+
     networks:
       - internal
 
   reactive-resume:
     image: amruthpillai/reactive-resume:latest
+    container_name: reactive-resume
     restart: unless-stopped
+
     environment:
       - APP_URL=${REACTIVE_RESUME_APP_URL}
       - DATABASE_URL=${REACTIVE_RESUME_DATABASE_URL}
       - AUTH_SECRET=${REACTIVE_RESUME_AUTH_SECRET}
+
     volumes:
       - ./data:/app/data
+
     depends_on:
       postgres:
         condition: service_healthy
+
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.resume.rule=Host(`resume.mattworley.dev`)"
@@ -35,6 +45,7 @@ services:
       - "traefik.http.routers.resume.tls=true"
       - "traefik.http.routers.resume.tls.certresolver=cloudflare"
       - "traefik.http.services.resume.loadbalancer.server.port=3000"
+
     networks:
       - proxy
       - internal
@@ -48,3 +59,5 @@ networks:
 
 volumes:
   postgres_data:
+    external: true
+    name: reactive-resume_postgres_data
