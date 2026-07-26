@@ -23,6 +23,8 @@ services:
 
 volumes:
   vaultwarden_data:
+    external: true
+    name: vaultwarden_data
 
 networks:
   proxy:
