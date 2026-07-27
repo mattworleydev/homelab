@@ -1,10 +1,25 @@
+# =============================================================================
+# Goal: Make sure every Docker Compose file in the repo is syntactically valid
+#       and that no secrets have been accidentally committed.
+#
+# Secrets are injected at deploy time.
+# CI uses dummy values only to validate Compose interpolation.
+# No real secrets enter GitHub Actions.
+# =============================================================================
+
 name: Validate Homelab Infrastructure
 
 on:
+  # Run on every pull request so broken compose files never reach main
   pull_request:
+
+  # Also run on pushes to main (e.g. direct commits or merges)
   push:
     branches:
       - main
+
+permissions:
+  contents: read
 
 jobs:
   validate:
@@ -12,15 +27,67 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # -----------------------------------------------------------------------
+      # 1. Fetch the repository contents
+      # -----------------------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # -----------------------------------------------------------------------
+      # 2. Set up Docker tooling
+      # -----------------------------------------------------------------------
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # -----------------------------------------------------------------------
+      # 3. Generate CI-only dummy values for Compose variable interpolation
+      #    This file is temporary and never committed.
+      # -----------------------------------------------------------------------
+      - name: Create temporary dummy .env for variable interpolation
+        run: |
+          echo "# Temporary CI-only env file - never commit this" > .env.ci
+
+          # Find every unique ${VAR} used across all stacks and turn it into
+          # VAR=ci-dummy-value
+          find stacks -name 'compose.yml' -print0 \
+            | xargs -0 grep -ohE '\$\{[A-Za-z0-9_]+\}' \
+            | sort -u \
+            | sed 's/\${\(.*\)}/\1=ci-dummy-value/' \
+            >> .env.ci
+
+          echo "Generated the following placeholders for CI:"
+          cat .env.ci
+
+
+      # -----------------------------------------------------------------------
+      # 4. Validate every Compose file
+      #
+      #    Validate Compose syntax, interpolation, and schema without real secrets
+      # -----------------------------------------------------------------------
       - name: Validate Docker Compose files
         run: |
+          set -euo pipefail
+          ERROR=0
+
           for file in stacks/*/compose.yml; do
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "Validating $file"
-            docker compose -f "$file" config --quiet
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+            if ! docker compose  --env-file .env.ci -f "$file" config --quiet; then
+              echo "FAILED: $file"
+              # Re-run without --quiet so the full error appears in the log
+              docker compose --env-file .env.ci -f "$file" config || true
+              ERROR=1
+            else
+              echo "OK: $file"
+            fi
           done
+
+          exit $ERROR
       
+      # -----------------------------------------------------------------------
+      # 5. Scan the whole repository for accidentally committed secrets
+      # -----------------------------------------------------------------------
       - name: Scan for leaked secrets
         uses: gitleaks/gitleaks-action@v2
