@@ -64,7 +64,7 @@ jobs:
       #    Some stacks use env_file for bootstrap configuration.
       #    CI only needs empty placeholder values to validate Compose syntax.
       # -----------------------------------------------------------------------  
-      - name: Create temporary bootstrap ent files
+      - name: Create temporary bootstrap env files
         run: |
           for compose in stacks/*/compose.yml; do
             stack_dir=$(dirname "$compose")
@@ -86,17 +86,14 @@ jobs:
           ERROR=0
 
           for file in stacks/*/compose.yml; do
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "Validating $file"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-            if ! docker compose  --env-file .env.ci -f "$file" config --quiet; then
-              echo "FAILED: $file"
-              # Re-run without --quiet so the full error appears in the log
-              docker compose --env-file .env.ci -f "$file" config || true
-              ERROR=1
+            if docker compose --env-file .env.ci -f "$file" config --quiet; then
+              echo "✅ $file"
             else
-              echo "OK: $file"
+              echo "❌ $file"
+              echo "----- full error -----"
+              docker compose --env-file .env.ci -f "$file" config || true
+              echo "----------------------"
+              ERROR=1
             fi
           done
 
