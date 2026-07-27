@@ -58,9 +58,25 @@ jobs:
           echo "Generated the following placeholders for CI:"
           cat .env.ci
 
+      # -----------------------------------------------------------------------
+      # 4. Create temporary bootstrap .env files required by Compose
+      #
+      #    Some stacks use env_file for bootstrap configuration.
+      #    CI only needs empty placeholder values to validate Compose syntax.
+      # -----------------------------------------------------------------------  
+      - name: Create temporary bootstrap ent files
+        run: |
+          for compose in stacks/*/compose.yml; do
+            stack_dir=$(dirname "$compose")
+
+            if grep -q "env_file:" "$compose"; then
+              echo "Creating CI placeholder .env in $stack_dir"
+              touch "$stack_dir/.env"
+            fi
+          done
 
       # -----------------------------------------------------------------------
-      # 4. Validate every Compose file
+      # 5. Validate every Compose file
       #
       #    Validate Compose syntax, interpolation, and schema without real secrets
       # -----------------------------------------------------------------------
@@ -87,7 +103,7 @@ jobs:
           exit $ERROR
       
       # -----------------------------------------------------------------------
-      # 5. Scan the whole repository for accidentally committed secrets
+      # 6. Scan the whole repository for accidentally committed secrets
       # -----------------------------------------------------------------------
       - name: Scan for leaked secrets
         uses: gitleaks/gitleaks-action@v2
