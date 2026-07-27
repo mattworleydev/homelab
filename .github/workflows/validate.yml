@@ -1,0 +1,26 @@
+name: Validate Homelab Infrastructure
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    name: Validate Infrastructure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose files
+        run: |
+          for file in stacks/*/compose.yml; do
+            echo "Validating $file"
+            docker compose -f "$file" config --quiet
+          done
+      
+      - name: Scan for leaked secrets
+        uses: gitleaks/gitleaks-action@v2
