@@ -32,6 +32,9 @@ jobs:
       # -----------------------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Required for gitleaks to inspect commit history
+          fetch-depth: 0
 
       # -----------------------------------------------------------------------
       # 2. Set up Docker tooling
