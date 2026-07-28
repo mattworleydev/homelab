@@ -32,7 +32,7 @@ services:
       - AUTH_SECRET=${REACTIVE_RESUME_AUTH_SECRET}
 
     volumes:
-      - ./data:/app/data
+      - reactive_resume_data:/app/data
 
     depends_on:
       postgres:
@@ -61,3 +61,7 @@ volumes:
   postgres_data:
     external: true
     name: reactive-resume_postgres_data
+
+  reactive_resume_data:
+    external: true
+    name: reactive_resume_data
